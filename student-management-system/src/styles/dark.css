@@ -1,0 +1,53 @@
+/* src/styles/dark.css */
+
+/* Dark theme variables */
+.dark-mode {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: #0f3460;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border-color: #2a2a4a;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Apply dark theme to body when .dark-mode is present */
+body.dark-mode {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.dark-mode .card,
+.dark-mode .login-card,
+.dark-mode .stat-card {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode nav {
+  background-color: var(--bg-secondary);
+}
+
+.dark-mode input,
+.dark-mode select,
+.dark-mode textarea {
+  background-color: #2a2a4a;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode table {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.dark-mode table th {
+  background-color: var(--bg-card);
+}
+
+.dark-mode table td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* You can add more as your app grows */
