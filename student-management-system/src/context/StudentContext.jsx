@@ -8,6 +8,10 @@ const initialState = {
   students: [],
   loading: false,
   error: null,
+  // Optional: add pagination state later if needed
+  // total: 0,
+  // totalPages: 0,
+  // currentPage: 1,
 };
 
 const ACTIONS = {
@@ -54,8 +58,11 @@ export const StudentProvider = ({ children }) => {
     const fetchStudents = async () => {
       dispatch({ type: ACTIONS.SET_LOADING, payload: true });
       try {
-        const data = await studentService.getStudents();
-        dispatch({ type: ACTIONS.SET_STUDENTS, payload: data });
+        // ✅ Use paginated API call (page 1, limit 20)
+        const data = await studentService.getStudents(1, 20);
+        // data = { students: [...], total: X, page: 1, totalPages: Y }
+        dispatch({ type: ACTIONS.SET_STUDENTS, payload: data.students });
+        // Optionally store total and totalPages in state for pagination UI later
       } catch (error) {
         dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
       }

@@ -3,18 +3,13 @@ import API from './api';
 
 /**
  * Extract a user‑friendly error message from an API error.
- * @param {any} error – Axios error object.
- * @returns {string} – Human‑readable error message.
  */
 const getErrorMessage = (error) => {
   if (error.response) {
-    // The request was made and the server responded with a status code outside 2xx
     return error.response.data?.message || error.response.data?.error || 'Server error.';
   } else if (error.request) {
-    // The request was made but no response received
     return 'Network error – please check your connection.';
   } else {
-    // Something happened in setting up the request
     return error.message || 'Unknown error occurred.';
   }
 };
@@ -24,14 +19,18 @@ const getErrorMessage = (error) => {
 // ----------------------
 
 /**
- * Get all students.
- * @param {Object} params – Optional query parameters (page, limit, filters).
- * @returns {Promise<Array>} – Array of student objects.
+ * Get all students with pagination and filters.
+ * @param {number} page – Page number (default: 1).
+ * @param {number} limit – Items per page (default: 20).
+ * @param {Object} filters – Additional filters (department, status, etc.).
+ * @returns {Promise<Object>} – { students, total, page, totalPages }
  */
-export const getStudents = async (params = {}) => {
+export const getStudents = async (page = 1, limit = 20, filters = {}) => {
   try {
-    const response = await API.get('/students', { params });
-    return response.data; // Expected: array of students (or paginated object)
+    const response = await API.get('/students', {
+      params: { page, limit, ...filters }
+    });
+    return response.data;
   } catch (error) {
     const message = getErrorMessage(error);
     console.error('[getStudents] Error:', message);
@@ -41,8 +40,6 @@ export const getStudents = async (params = {}) => {
 
 /**
  * Get a single student by ID.
- * @param {string|number} id – Student ID.
- * @returns {Promise<Object>} – Student object.
  */
 export const getStudentById = async (id) => {
   try {
@@ -57,8 +54,6 @@ export const getStudentById = async (id) => {
 
 /**
  * Create a new student.
- * @param {Object} studentData – Student data (matches your model).
- * @returns {Promise<Object>} – Created student object.
  */
 export const addStudent = async (studentData) => {
   try {
@@ -73,9 +68,6 @@ export const addStudent = async (studentData) => {
 
 /**
  * Update an existing student.
- * @param {string|number} id – Student ID.
- * @param {Object} studentData – Updated data.
- * @returns {Promise<Object>} – Updated student object.
  */
 export const updateStudent = async (id, studentData) => {
   try {
@@ -90,13 +82,10 @@ export const updateStudent = async (id, studentData) => {
 
 /**
  * Delete a student.
- * @param {string|number} id – Student ID.
- * @returns {Promise<void>}
  */
 export const deleteStudent = async (id) => {
   try {
     await API.delete(`/students/${id}`);
-    // No content to return; operation succeeded.
   } catch (error) {
     const message = getErrorMessage(error);
     console.error(`[deleteStudent] Error for ID ${id}:`, message);
@@ -110,7 +99,6 @@ export const deleteStudent = async (id) => {
 
 /**
  * Delete ALL students from the database.
- * @returns {Promise<Object>} – { message: "Deleted X students." }
  */
 export const deleteAllStudents = async () => {
   try {
@@ -124,13 +112,9 @@ export const deleteAllStudents = async () => {
 };
 
 // ----------------------
-// Optional: Additional Helpers (CSV Export/Import)
+// Optional: CSV Export/Import
 // ----------------------
 
-/**
- * Export students as CSV (using the backend endpoint if you have one).
- * @returns {Promise<Blob>} – CSV file blob.
- */
 export const exportStudentsCSV = async () => {
   try {
     const response = await API.get('/students/export', { responseType: 'blob' });
@@ -142,11 +126,6 @@ export const exportStudentsCSV = async () => {
   }
 };
 
-/**
- * Import students from CSV (upload file).
- * @param {FormData} formData – Contains the CSV file.
- * @returns {Promise<Object>} – Import summary.
- */
 export const importStudentsCSV = async (formData) => {
   try {
     const response = await API.post('/students/import', formData, {
